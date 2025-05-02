@@ -28,7 +28,7 @@ Website Kasir Toko adalah aplikasi berbasis web yang dibangun menggunakan Larave
    ```bash
    git clone https://github.com/SakumDisiniPa/kasir-toko.git
    cd kasir-laravel
-````
+```
 
 2. **Install dependencies:**
 
