@@ -3,41 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+use App\Services\PelangganService;
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $pelangganService;
+
+    public function __construct(PelangganService $pelangganService)
+    {
+        $this->pelangganService = $pelangganService;
+    }
+
     public function index(Request $request)
     {
-        $search = $request->search;
-        $pelanggans = Pelanggan::orderBy('id')
-            ->when($search, function ($q, $search) {
-                return $q->where('nama', 'like', "%{$search}%");
-            })
-            ->paginate();
-
-        // Menambahkan parameter search pada pagination jika ada pencarian
-        if ($search) $pelanggans->appends(['search' => $search]);
+        $pelanggans = $this->pelangganService->getAllPelanggan($request->search);
 
         return view('pelanggan.index', [
             'pelanggans' => $pelanggans
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('pelanggan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -46,22 +37,16 @@ class PelangganController extends Controller
             'nomor_tlp' => ['nullable', 'max:14']
         ]);
 
-        Pelanggan::create($request->all());
+        $this->pelangganService->createPelanggan($request->all());
 
         return redirect()->route('pelanggan.index')->with('store', 'success');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Pelanggan $pelanggan)
     {
-        abort(404); // Tidak ada tampilan untuk detail pelanggan
+        abort(404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Pelanggan $pelanggan)
     {
         return view('pelanggan.edit', [
@@ -69,9 +54,6 @@ class PelangganController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Pelanggan $pelanggan)
     {
         $request->validate([
@@ -80,17 +62,14 @@ class PelangganController extends Controller
             'nomor_tlp' => ['nullable', 'max:14']
         ]);
 
-        $pelanggan->update($request->all());
+        $this->pelangganService->updatePelanggan($pelanggan, $request->all());
 
         return redirect()->route('pelanggan.index')->with('update', 'success');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Pelanggan $pelanggan)
     {
-        $pelanggan->delete();
+        $this->pelangganService->deletePelanggan($pelanggan);
 
         return back()->with('destroy', 'success');
     }

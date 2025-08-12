@@ -1,8 +1,9 @@
-@extends('layouts.laporan', ['title' => 'Laporan Harian'])
-
+@extends('layouts.laporan',['title'=>'Laporan Harian'])
 @section('content')
+
 <h1 class="text-center">Laporan Harian</h1>
-<p>Tanggal : {{ date('d/m/Y', strtotime(request()->tanggal)) }}</p>
+
+<p>Tanggal : {{ date('d/m/Y', strtotime( request()->tanggal )) }}</p>
 
 <table class="table table-bordered table-sm">
     <thead>
@@ -24,15 +25,19 @@
                 <td>{{ $row->nama_pelanggan }}</td>
                 <td>{{ $row->nama_kasir }}</td>
                 <td>{{ ucwords($row->status) }}</td>
-                <td>{{ date('H:i:s', strtotime($row->tanggal)) }}</td>
+                <td>{{ date('d/m/Y', strtotime($row->tanggal)) }}</td>
                 <td>{{ number_format($row->total, 0, ',', '.') }}</td>
             </tr>
         @endforeach
     </tbody>
     <tfoot>
         <tr>
-            <th colspan="6">Jumlah Total</th>
-            <th>{{ number_format($penjualan->sum('total'), 0, ',', '.') }}</th>
+            <th colspan="6">
+                Jumlah Total
+            </th>
+            <th>
+                {{ number_format( $penjualan->sum('total') , 0, ',', '.') }}
+            </th>
         </tr>
     </tfoot>
 </table>

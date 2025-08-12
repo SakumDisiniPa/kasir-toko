@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
-    // Menampilkan profil pengguna
+    protected $profileService;
+
+    public function __construct(ProfileService $profileService)
+    {
+        $this->profileService = $profileService;
+    }
+
     public function show(Request $request)
     {
         return view('user.profile', [
@@ -14,7 +21,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Menampilkan form untuk mengedit profil pengguna
     public function edit(Request $request)
     {
         return view('user.profile-edit', [
@@ -22,31 +28,16 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Mengupdate data profil pengguna
     public function update(Request $request)
     {
-        // Validasi input yang diterima
         $request->validate([
             'nama' => ['required', 'max:100'],
             'username' => ['required', 'unique:users,username,' . $request->user()->id],
             'password_baru' => ['nullable', 'max:100', 'confirmed']
         ]);
 
-        // Jika ada password baru enkripsi password dan update data
-        if ($request->password_baru) {
-            $request->merge([
-                'password' => bcrypt($request->password_baru),
-            ]);
-            $request->user()->update($request->all());
+        $this->profileService->updateProfile($request->user(), $request->all());
 
-            // Redirect ke halaman profil dengan pesan sukses
-            return redirect()->route('profile.show')->with('update', 'success');
-        } else {
-            // Jika tidak ada password baru, update nama dan username saja
-            $request->user()->update($request->only('nama', 'username'));
-
-            // Redirect ke halaman profil dengan pesan sukses
-            return redirect()->route('profile.show')->with('update', 'success');
-        }
+        return redirect()->route('profile.show')->with('update', 'success');
     }
 }

@@ -2,77 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pelanggan;
-use App\Models\Produk;
-use Cart;
 use Illuminate\Http\Request;
+use App\Services\CartService;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function index(Request $request)
     {
-        $cart = Cart::name($request->user()->id);
-        $cart->applyTax([
-            'id' => 1,
-            'rate' => 10,
-            'title' => 'Pajak PPN 10%'
-        ]);
-        return $cart->getDetails()->toJson();
+        $response = $this->cartService->getCartDetails($request->user()->id);
+
+        return response()->json($response);
     }
 
     public function store(Request $request)
     {
+        // Validasi input
         $request->validate([
-            'kode_produk' => ['required', 'exists:produks,kode_produk'] // Memastikan 'kode_produk' ada di tabel 'produks'
+            'kode_produk' => ['required', 'exists:produks,kode_produk'],
+            'quantity' => ['nullable', 'integer', 'min:1']
         ]);
 
-        $produk = Produk::where('kode_produk', $request->kode_produk)->first();
-        if (!$produk) {
-            return response()->json(['message' => 'Produk tidak ditemukan.'], 404);
+        try {
+            $item = $this->cartService->addItemToCart(
+                $request->kode_produk,
+                $request->quantity,
+                $request->user()->id
+            );
+
+            return response()->json([
+                'message' => 'Produk berhasil ditambahkan ke keranjang.',
+                'item' => $item
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
         }
-
-        $cart = Cart::name($request->user()->id);
-        $cart->addItem([
-            'id' => $produk->id,
-            'title' => $produk->nama_produk,
-            'quantity' => 1,
-            'price' => $produk->harga
-        ]);
-
-        return response()->json(['message' => 'Berhasil ditambahkan.']);
     }
 
     public function update(Request $request, $hash)
     {
         $request->validate([
-            'qty' => ['required', 'in:-1,1'] // Memastikan hanya nilai -1 atau 1 yang diperbolehkan
+            'qty' => ['required', 'in:-1,1']
         ]);
 
-        $cart = Cart::name($request->user()->id);
-        $item = $cart->getItem($hash);
+        try {
+            $this->cartService->updateCartItem($hash, $request->qty, $request->user()->id);
 
-        if (!$item) {
-            return abort(404);
+            return response()->json(['message' => 'Berhasil diupdate.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
         }
-
-        $cart->updateItem($item->getHash(), [
-            'quantity' => $item->getQuantity() + $request->qty
-        ]);
-
-        return response()->json(['message' => 'Berhasil diupdate.']);
     }
 
     public function destroy(Request $request, $hash)
     {
-        $cart = Cart::name($request->user()->id);
-        $cart->removeItem($hash);
+        $this->cartService->removeCartItem($hash, $request->user()->id);
+
         return response()->json(['message' => 'Berhasil dihapus.']);
     }
 
     public function clear(Request $request)
     {
-        $cart = Cart::name($request->user()->id);
-        $cart->destroy();
+        $this->cartService->clearCart($request->user()->id);
+
         return back();
     }
 }

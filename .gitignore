@@ -1,4 +1,4 @@
-/publi/adminlte
+/public/adminlte
 /.phpunit.cache
 /node_modules
 /public/build

@@ -13,12 +13,8 @@ return new class extends Migration
     {
         Schema::create('penjualans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()
-            ->cascadeOnDelete()
-            ->noActionOnUpdate();
-            $table->foreignId('pelanggan_id')->constrained()
-            ->cascadeOnDelete()
-            ->noActionOnUpdate();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('pelanggan_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('nomor_transaksi')->unique();
             $table->dateTime('tanggal');
             $table->unsignedInteger('subtotal');
@@ -26,7 +22,7 @@ return new class extends Migration
             $table->unsignedInteger('total');
             $table->unsignedInteger('tunai');
             $table->unsignedBigInteger('kembalian');
-            $table->enum('status',['selesai','batal'])->default('selesai');
+            $table->enum('status', ['selesai', 'batal'])->default('selesai');
         });
     }
 

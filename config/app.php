@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------
@@ -159,16 +159,16 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Jackiedo\Cart\CartServiceProvider::class,
         /*
          * Application Service Providers...
          */
-        Jackiedo\Cart\CartServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -183,6 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        // 'Example' => App\Facades\Example::class,
         'Cart' => Jackiedo\Cart\Facades\Cart::class,
     ])->toArray(),
 

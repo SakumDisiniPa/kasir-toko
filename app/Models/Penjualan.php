@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Penjualan extends Model
 {
@@ -21,6 +21,13 @@ class Penjualan extends Model
         'kembalian',
         'status',
         'subtotal',
-        'pajak'
+        'pajak',
+        'diskon_id',
+        'nilai_diskon',
     ];
+
+    public function diskon()
+    {
+        return $this->belongsTo(Diskon::class);
+    }
 }

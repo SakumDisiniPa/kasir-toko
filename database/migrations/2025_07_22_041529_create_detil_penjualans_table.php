@@ -13,12 +13,8 @@ return new class extends Migration
     {
         Schema::create('detil_penjualans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penjualan_id')->constrained()
-            ->cascadeOnDelete()
-            ->noActionOnUpdate();
-            $table->foreignId('produk_id')->constrained()
-            ->cascadeOnDelete()
-            ->noActionOnUpdate();
+            $table->foreignId('penjualan_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('produk_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedInteger('jumlah');
             $table->unsignedInteger('harga_produk');
             $table->unsignedInteger('subtotal');
