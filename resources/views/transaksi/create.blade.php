@@ -1,44 +1,70 @@
 @extends('layouts.main', ['title' => 'Transaksi'])
 
 @section('title-content')
-    <i class="fas fa-cash-register mr-2"></i>
-    Transaksi
+<div class="flex items-center space-x-3">
+    <div class="p-3 bg-orange-100 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+    </div>
+    <h1 class="text-3xl font-bold text-gray-800">Transaksi Baru</h1>
+</div>
 @endsection
 
 @section('content')
- @if ($errors->has('stok'))
-    <x-alert type="danger">
-        <strong>Stok tidak mencukupi:</strong> {{ $errors->first('stok') }}
-    </x-alert>
+@if ($errors->has('stok'))
+    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <strong class="font-medium text-red-700">Stok tidak mencukupi:</strong>
+            <span class="ml-2 text-red-600">{{ $errors->first('stok') }}</span>
+        </div>
+    </div>
 @endif
 
-<div class="row">
-    <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Column (1/3 width) -->
+    <div class="space-y-6">
         @include('transaksi.form-code')
         
-        <div class="card card-orange card-outline card-tabs">
-            <div class="card-header p-0 pt-1 border-bottom-0">
-                <ul class="nav nav-tabs nav-fill" id="cari-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active small" id="cari-produk-tab" data-toggle="pill"
-                            href="#cari-produk" role="tab">
-                            <i class="fas fa-box d-lg-none"></i>
-                            <span class="d-none d-lg-inline">Cari Produk</span>
-                            <span class="d-lg-none">Produk</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link small" id="cari-pelanggan-tab" data-toggle="pill"
-                            href="#cari-pelanggan" role="tab">
-                            <i class="fas fa-user d-lg-none"></i>
-                            <span class="d-none d-lg-inline">Cari Pelanggan</span>
-                            <span class="d-lg-none">Customer</span>
-                        </a>
-                    </li>
-                </ul>
+        <!-- Search Tabs -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div class="border-b border-gray-200">
+                <div class="flex" role="tablist">
+                    <button class="flex-1 py-4 px-4 text-center font-medium text-sm lg:text-base transition-colors duration-200 border-r border-gray-200 focus:outline-none"
+                            id="cari-produk-tab" 
+                            data-toggle="pill" 
+                            href="#cari-produk" 
+                            role="tab"
+                            aria-selected="true">
+                        <div class="flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            <span class="hidden lg:inline">Cari Produk</span>
+                            <span class="lg:hidden">Produk</span>
+                        </div>
+                    </button>
+                    <button class="flex-1 py-4 px-4 text-center font-medium text-sm lg:text-base transition-colors duration-200 focus:outline-none"
+                            id="cari-pelanggan-tab" 
+                            data-toggle="pill" 
+                            href="#cari-pelanggan" 
+                            role="tab"
+                            aria-selected="false">
+                        <div class="flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span class="hidden lg:inline">Cari Pelanggan</span>
+                            <span class="lg:hidden">Customer</span>
+                        </div>
+                    </button>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="tab-content" id="cari-tabContent">
+            <div class="p-5">
+                <div class="tab-content">
                     <div class="tab-pane fade active show" id="cari-produk" role="tabpanel">
                         @include('transaksi.cari-produk')
                     </div>
@@ -50,68 +76,9 @@
         </div>
     </div>
     
-    <div class="col-12 col-lg-8">
+    <!-- Right Column (2/3 width) -->
+    <div class="lg:col-span-2">
         @include('transaksi.form-cart')
     </div>
 </div>
 @endsection
-
-<style>
-@media (max-width: 576px) {
-    .nav-tabs .nav-link {
-        padding: 0.5rem 0.25rem;
-        font-size: 0.875rem;
-    }
-    
-    .card-body {
-        padding: 0.75rem;
-    }
-    
-    .row {
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
-    }
-    
-    .row > [class*="col-"] {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-tabs .nav-link {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .tab-content {
-        padding-top: 0.5rem;
-    }
-}
-
-@media (min-width: 992px) {
-    .nav-tabs .nav-link {
-        padding: 0.75rem 1rem;
-    }
-}
-
-/* Mobile optimization for better touch targets */
-@media (max-width: 768px) {
-    .btn {
-        min-height: 38px;
-        padding: 0.5rem 0.75rem;
-    }
-    
-    .btn-xs {
-        min-height: 32px;
-        padding: 0.25rem 0.5rem;
-    }
-    
-    .form-control {
-        min-height: 38px;
-    }
-    
-    .input-group-append .btn {
-        border-left: 1px solid #ced4da;
-    }
-}
-</style>

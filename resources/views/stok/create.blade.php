@@ -1,181 +1,128 @@
 @extends('layouts.main', ['title' => 'Stok'])
 
 @section('title-content')
-    <i class="fas fa-pallet mr-2"></i>
-    Stok
+<div class="flex items-center text-gray-800">
+    <i class="fas fa-pallet mr-3 text-orange-500 text-3xl"></i>
+    <h1 class="text-3xl font-extrabold">Tambah Stok Barang</h1>
+</div>
 @endsection
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6 col-xl-4">
-        <form method="POST" action="{{ route('stok.store') }}" class="card card-orange card-outline shadow">
-            <div class="card-header bg-white border-bottom">
-                <h3 class="card-title mb-0">
-                    <i class="fas fa-plus-circle mr-2 text-orange"></i>
-                    Tambah Stok Barang
-                </h3>
+<div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-5">
+            <div class="flex items-center">
+                <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                    <i class="fas fa-plus-circle text-white text-xl"></i>
+                </div>
+                <h3 class="ml-3 text-xl font-semibold text-white">Formulir Stok Barang</h3>
             </div>
+        </div>
 
-            <div class="card-body p-3 p-md-4">
-                @csrf
-                
-                <div class="form-group">
-                    <label class="font-weight-semibold text-dark">
-                        <i class="fas fa-box text-info mr-1"></i>
-                        Nama Produk
-                        <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                        <input type="text" id="namaProduk" name="nama_produk"
-                            class="form-control form-control-lg @error('produk_id') is-invalid @enderror" 
-                            placeholder="Pilih produk..." disabled>
+        <form method="POST" action="{{ route('stok.store') }}" class="px-6 py-8 space-y-6">
+            @csrf
 
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalCari">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-box text-blue-500 mr-2"></i>
+                    Nama Produk <span class="text-red-500 ml-1">*</span>
+                </label>
+                <div class="relative flex items-center">
+                    <input type="text" id="namaProduk" name="nama_produk"
+                           class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-lg transition-all duration-200"
+                           placeholder="Pilih produk..." disabled>
+                    <button type="button" class="absolute right-0 top-0 bottom-0 px-4 flex items-center text-orange-500 hover:text-orange-600 transition-colors duration-200"
+                            data-toggle="modal" data-target="#modalCari" title="Cari Produk">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
                     @error('produk_id')
-                        <div class="invalid-feedback d-block">
-                            {{ $message }}
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
                         </div>
                     @enderror
-                    <input type="hidden" name="produk_id" id="produkId">
                 </div>
-
-                <div class="form-group">
-                    <label class="font-weight-semibold text-dark">
-                        <i class="fas fa-sort-numeric-up text-success mr-1"></i>
-                        Jumlah
-                        <span class="text-danger">*</span>
-                    </label>
-                    <x-input name="jumlah" type="text" class="form-control-lg" placeholder="Masukkan jumlah stok" />
-                </div>
-
-                <div class="form-group">
-                    <label class="font-weight-semibold text-dark">
-                        <i class="fas fa-truck text-warning mr-1"></i>
-                        Nama Suplier
-                        <span class="text-danger">*</span>
-                    </label>
-                    <x-input name="nama_suplier" type="text" class="form-control-lg" placeholder="Masukkan nama suplier" />
-                </div>
+                @error('produk_id')
+                    <div class="text-sm text-red-500 mt-1">
+                        {{ $message }}
+                    </div>
+                @enderror
+                <input type="hidden" name="produk_id" id="produkId">
             </div>
 
-            <div class="card-footer bg-light border-top">
-                <div class="d-flex flex-column flex-md-row justify-content-between">
-                    <div class="mb-2 mb-md-0">
-                        <a href="{{ route('stok.index') }}" class="btn btn-secondary btn-block btn-md-inline">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            Batal
-                        </a>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary btn-block btn-md-inline px-4">
-                            <i class="fas fa-save mr-2"></i>
-                            Simpan Stok
-                        </button>
-                    </div>
-                </div>
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-sort-numeric-up-alt text-green-500 mr-2"></i>
+                    Jumlah <span class="text-red-500 ml-1">*</span>
+                </label>
+                <x-input name="jumlah" type="number" 
+                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-lg transition-all duration-200" 
+                         placeholder="Masukkan jumlah stok" />
+            </div>
+
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-truck text-purple-500 mr-2"></i>
+                    Nama Suplier <span class="text-red-500 ml-1">*</span>
+                </label>
+                <x-input name="nama_suplier" type="text"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-lg transition-all duration-200"
+                         placeholder="Masukkan nama suplier" />
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-gray-200">
+                <a href="{{ route('stok.index') }}"
+                   class="px-6 py-3 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200 flex items-center justify-center">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Batal
+                </a>
+                <button type="submit"
+                        class="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-medium text-white hover:from-orange-600 hover:to-amber-600 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                    <i class="fas fa-save mr-2"></i>
+                    Simpan Stok
+                </button>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-    .form-control-lg {
-        border-radius: 0.5rem;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
-    
-    .form-control-lg:focus {
-        border-color: #fd7e14;
-        box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
-    }
-    
-    .card {
-        border-radius: 1rem;
-        border: none;
-    }
-    
-    .card-header {
-        border-radius: 1rem 1rem 0 0 !important;
-    }
-    
-    .shadow {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-    
-    @media (max-width: 767.98px) {
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-        
-        .card-body {
-            padding: 1.5rem !important;
-        }
-        
-        .form-control-lg {
-            font-size: 16px; /* Prevent zoom on iOS */
-        }
-    }
-
-    @media (min-width: 768px) {
-        .btn-md-inline {
-            display: inline-block;
-            width: auto;
-        }
-    }
-    
-    .btn:hover {
-        transform: translateY(-1px);
-        transition: all 0.3s ease;
-    }
-</style>
 @endsection
 
 @push('modals')
 <div class="modal fade" id="modalCari" data-backdrop="static" data-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
+        <div class="modal-content rounded-3xl shadow-2xl">
+            <div class="modal-header bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-t-3xl">
+                <h5 class="modal-title text-xl font-bold flex items-center">
                     <i class="fas fa-search mr-2"></i>
                     Cari Produk
                 </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-white opacity-100 hover:opacity-75 transition-opacity duration-200" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body p-4">
-                <form id="formSearch" action="" method="get" class="mb-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-lg" id="search" 
-                               placeholder="Ketik minimal 3 karakter untuk mencari...">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+            <div class="modal-body p-6">
+                <form id="formSearch" action="" method="get" class="mb-4">
+                    <div class="relative">
+                        <input type="text" class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-lg transition-all duration-200"
+                               id="search" placeholder="Ketik minimal 3 karakter untuk mencari...">
+                        <button type="submit" class="absolute right-0 top-0 bottom-0 px-4 flex items-center text-gray-500 hover:text-orange-500 transition-colors duration-200">
+                            <i class="fas fa-search text-lg"></i>
+                        </button>
                     </div>
                 </form>
 
-                <div class="table-responsive">
-                    <table class="table table-sm table-striped table-hover">
-                        <thead class="bg-light">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th width="10%">#</th>
-                                <th width="70%">Nama Produk</th>
-                                <th width="20%" class="text-center">Aksi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Produk</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="resultProduk">
+                        <tbody id="resultProduk" class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td colspan="3" class="text-center text-muted py-4">
+                                <td colspan="3" class="text-center text-gray-500 py-4">
                                     <i class="fas fa-search fa-2x mb-2"></i><br>
                                     Ketik minimal 3 karakter untuk mencari produk
                                 </td>
@@ -200,7 +147,7 @@
             } else {
                 $('#resultProduk').html(`
                     <tr>
-                        <td colspan="3" class="text-center text-warning py-4">
+                        <td colspan="3" class="text-center text-red-500 py-4">
                             <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
                             Minimal 3 karakter untuk mencari
                         </td>
@@ -209,7 +156,6 @@
             }
         });
 
-        // Real-time search
         $('#search').on('keyup', function() {
             let search = $(this).val();
             if (search.length >= 3) {
@@ -217,7 +163,7 @@
             } else if (search.length === 0) {
                 $('#resultProduk').html(`
                     <tr>
-                        <td colspan="3" class="text-center text-muted py-4">
+                        <td colspan="3" class="text-center text-gray-500 py-4">
                             <i class="fas fa-search fa-2x mb-2"></i><br>
                             Ketik minimal 3 karakter untuk mencari produk
                         </td>
@@ -231,32 +177,35 @@
         $('#resultProduk').html(`
             <tr>
                 <td colspan="3" class="text-center py-4">
-                    <i class="fas fa-spinner fa-spin fa-2x mb-2"></i><br>
-                    Mencari produk...
+                    <i class="fas fa-spinner fa-spin fa-2x mb-2 text-orange-500"></i><br>
+                    <span class="text-gray-700">Mencari produk...</span>
                 </td>
             </tr>
         `);
 
         let url = "{{ route('stok.produk') }}?search=" + search;
         $.getJSON(url, function(result) {
-            $('#resultProduk').html('');
+            $('#resultProduk').empty();
             if (result.length > 0) {
                 result.forEach((produk, index) => {
-                    let row = '<tr>';
-                    row += `<td>${ index + 1 }</td>`;
-                    row += `<td>${produk.nama_produk}</td>`;
-                    row += `<td class="text-center">`;
-                    row += `<button type="button" class="btn btn-sm btn-success" onclick="addProduk(${produk.id},'${produk.nama_produk}')">`;
-                    row += `<i class="fas fa-plus mr-1"></i>Pilih`;
-                    row += `</button>`;
-                    row += '</td>';
-                    row += '</tr>';
+                    let row = `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${ index + 1 }</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${produk.nama_produk}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button type="button" class="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+                                        onclick="addProduk(${produk.id},'${produk.nama_produk}')">
+                                    <i class="fas fa-plus mr-1"></i>Pilih
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                     $('#resultProduk').append(row);
                 });
             } else {
                 $('#resultProduk').html(`
                     <tr>
-                        <td colspan="3" class="text-center text-muted py-4">
+                        <td colspan="3" class="text-center text-gray-500 py-4">
                             <i class="fas fa-box-open fa-2x mb-2"></i><br>
                             Tidak ada produk ditemukan
                         </td>
@@ -266,7 +215,7 @@
         }).fail(function() {
             $('#resultProduk').html(`
                 <tr>
-                    <td colspan="3" class="text-center text-danger py-4">
+                    <td colspan="3" class="text-center text-red-500 py-4">
                         <i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>
                         Gagal memuat data produk
                     </td>
@@ -280,10 +229,9 @@
         $('#produkId').val(id);
         $('#modalCari').modal('hide');
         
-        // Show success feedback
-        $('#namaProduk').addClass('border-success');
+        $('#namaProduk').addClass('border-green-500 ring-2 ring-green-500');
         setTimeout(() => {
-            $('#namaProduk').removeClass('border-success');
+            $('#namaProduk').removeClass('border-green-500 ring-2 ring-green-500');
         }, 2000);
     }
 </script>

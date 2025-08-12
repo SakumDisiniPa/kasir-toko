@@ -1,25 +1,23 @@
-<form action="" method="get" id="formCariPelanggan">
-    <div class="input-group">
-        <input type="text" class="form-control" placeholder="Nama Pelanggan" id="searchPelanggan">
-        <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-search d-sm-none"></i>
-                <span class="d-none d-sm-inline">Cari</span>
-            </button>
-        </div>
+<form action="" method="get" id="formCariPelanggan" class="bg-white rounded-3xl shadow-2xl p-6 mb-6">
+    <div class="relative flex items-center">
+        <input type="text" class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-lg transition-all duration-200" 
+               placeholder="Cari pelanggan..." id="searchPelanggan">
+        <button type="submit" class="absolute right-0 top-0 bottom-0 px-4 flex items-center text-gray-500 hover:text-orange-500 transition-colors duration-200">
+            <i class="fas fa-search text-lg"></i>
+        </button>
     </div>
 </form>
 
-<div class="mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <small class="text-muted">Hasil Pencarian:</small>
+<div class="bg-white rounded-3xl shadow-2xl overflow-hidden p-6">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">Hasil Pencarian</h3>
     </div>
     
-    <div class="table-responsive">
-        <table class="table table-sm table-hover">
-            <tbody id="resultPelanggan">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <tbody id="resultPelanggan" class="bg-white divide-y divide-gray-200">
                 <tr>
-                    <td class="text-center text-muted">Ketik minimal 3 karakter untuk mencari</td>
+                    <td class="px-6 py-4 text-center text-gray-500">Ketik minimal 3 karakter untuk mencari</td>
                 </tr>
             </tbody>
         </table>
@@ -29,43 +27,45 @@
 @push('scripts')
 <script>
     $(function() {
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }});
+
         $('#formCariPelanggan').submit(function(e) {
             e.preventDefault();
-            const search = $('#searchPelanggan').val();
+            const search = $('#searchPelanggan').val().trim();
             if (search.length >= 3) {
                 fetchCariPelanggan(search);
             } else {
-                $('#resultPelanggan').html('<tr><td class="text-center text-muted">Ketik minimal 3 karakter untuk mencari</td></tr>');
+                $('#resultPelanggan').html('<tr><td class="px-6 py-4 text-center text-gray-500">Ketik minimal 3 karakter untuk mencari</td></tr>');
             }
         });
         
         // Real-time search
         $('#searchPelanggan').on('input', function() {
-            const search = $(this).val();
+            const search = $(this).val().trim();
             if (search.length >= 3) {
                 fetchCariPelanggan(search);
             } else if (search.length === 0) {
-                $('#resultPelanggan').html('<tr><td class="text-center text-muted">Ketik minimal 3 karakter untuk mencari</td></tr>');
+                $('#resultPelanggan').html('<tr><td class="px-6 py-4 text-center text-gray-500">Ketik minimal 3 karakter untuk mencari</td></tr>');
             }
         });
     });
 
     function fetchCariPelanggan(search) {
-        $('#resultPelanggan').html('<tr><td class="text-center text-muted"><i class="fas fa-spinner fa-spin mr-2"></i>Mencari...</td></tr>');
+        $('#resultPelanggan').html('<tr><td class="px-6 py-4 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Mencari...</td></tr>');
         
         $.getJSON("/transaksi/pelanggan", {
             search: search
         }, function(response) {
             $('#resultPelanggan').html('');
             if (response.length === 0) {
-                $('#resultPelanggan').html('<tr><td class="text-center text-muted">Tidak ada hasil ditemukan</td></tr>');
+                $('#resultPelanggan').html('<tr><td class="px-6 py-4 text-center text-gray-500">Tidak ada hasil ditemukan</td></tr>');
             } else {
                 response.forEach(item => {
                     addResultPelanggan(item);
                 });
             }
         }).fail(function() {
-            $('#resultPelanggan').html('<tr><td class="text-center text-danger">Terjadi kesalahan saat mencari</td></tr>');
+            $('#resultPelanggan').html('<tr><td class="px-6 py-4 text-center text-red-500">Terjadi kesalahan saat mencari</td></tr>');
         });
     }
 
@@ -73,24 +73,22 @@
         const { id, nama } = item;
 
         const btn = `<button type="button" 
-                        class="btn btn-xs btn-success btn-block" 
+                        class="px-3 py-1 bg-green-500 text-white text-xs rounded-full hover:bg-green-600 transition-colors duration-200"
                         onclick="addPelanggan(${id})"
                         title="Pilih pelanggan ${nama}">
-                        <i class="fas fa-check mr-1 d-none d-sm-inline"></i>
-                        <span class="d-none d-sm-inline">Pilih</span>
-                        <i class="fas fa-check d-sm-none"></i>
+                        <i class="fas fa-check"></i>
                     </button>`;
 
-        const row = `<tr class="cursor-pointer" onclick="addPelanggan(${id})">
-                        <td>
-                            <div class="d-flex justify-content-between align-items-center">
+        const row = `<tr class="hover:bg-gray-50 cursor-pointer transition-colors duration-200" onclick="addPelanggan(${id})">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <strong>${nama}</strong>
-                                    <div class="d-none d-md-block">
-                                        <small class="text-muted">ID: ${id}</small>
+                                    <strong class="text-base text-gray-900">${nama}</strong>
+                                    <div class="hidden md:block">
+                                        <small class="text-sm text-gray-500">ID: ${id}</small>
                                     </div>
                                 </div>
-                                <div class="ml-2">
+                                <div class="ml-4">
                                     ${btn}
                                 </div>
                             </div>
@@ -100,120 +98,29 @@
     }
 
     function addPelanggan(id) {
-        // Show loading state
-        const loadingBtn = `<button type="button" class="btn btn-xs btn-secondary" disabled>
-                               <i class="fas fa-spinner fa-spin"></i>
-                           </button>`;
+        const targetBtn = $(`button[onclick="addPelanggan(${id})"]`);
+        const originalHtml = targetBtn.html();
         
-        $(`button[onclick="addPelanggan(${id})"]`).html(loadingBtn);
+        targetBtn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
         
         $.post("/transaksi/pelanggan", {
             id: id
         }, function(response) {
             fetchCart();
-            // Show success feedback
-            $(`button[onclick="addPelanggan(${id})"]`).closest('tr').addClass('table-success');
+            const pelangganRow = targetBtn.closest('tr');
+            pelangganRow.addClass('bg-green-100');
             setTimeout(() => {
-                $(`button[onclick="addPelanggan(${id})"]`).closest('tr').removeClass('table-success');
+                pelangganRow.removeClass('bg-green-100');
+                targetBtn.html(originalHtml).prop('disabled', false);
             }, 1000);
         }, "json").fail(function() {
-            // Show error feedback
-            $(`button[onclick="addPelanggan(${id})"]`).closest('tr').addClass('table-danger');
+            const pelangganRow = targetBtn.closest('tr');
+            pelangganRow.addClass('bg-red-100');
             setTimeout(() => {
-                $(`button[onclick="addPelanggan(${id})"]`).closest('tr').removeClass('table-danger');
+                pelangganRow.removeClass('bg-red-100');
+                targetBtn.html(originalHtml).prop('disabled', false);
             }, 1000);
         });
     }
 </script>
 @endpush
-
-<style>
-@media (max-width: 576px) {
-    .table-sm td {
-        padding: 0.5rem 0.25rem;
-        font-size: 0.875rem;
-    }
-    
-    .btn-xs {
-        padding: 0.25rem 0.375rem;
-        font-size: 0.75rem;
-        min-height: 28px;
-    }
-    
-    .input-group .btn {
-        min-height: 38px;
-        padding: 0.375rem 0.5rem;
-    }
-    
-    .form-control {
-        min-height: 38px;
-    }
-}
-
-@media (max-width: 768px) {
-    .table-responsive {
-        border: none;
-        margin-bottom: 0;
-    }
-    
-    .d-flex {
-        flex-wrap: wrap;
-    }
-    
-    .cursor-pointer {
-        cursor: pointer;
-    }
-    
-    .cursor-pointer:hover {
-        background-color: rgba(0, 123, 255, 0.1);
-    }
-}
-
-/* Touch-friendly improvements */
-@media (max-width: 768px) {
-    .table td {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .btn {
-        touch-action: manipulation;
-        min-height: 44px; /* Better touch target */
-    }
-    
-    .btn-xs {
-        min-height: 36px;
-    }
-}
-
-/* Loading and feedback states */
-.table-success {
-    animation: successFade 1s ease-in-out;
-}
-
-.table-danger {
-    animation: errorFade 1s ease-in-out;
-}
-
-@keyframes successFade {
-    0% { background-color: transparent; }
-    50% { background-color: #d4edda; }
-    100% { background-color: transparent; }
-}
-
-@keyframes errorFade {
-    0% { background-color: transparent; }
-    50% { background-color: #f8d7da; }
-    100% { background-color: transparent; }
-}
-
-/* Improved spacing */
-@media (max-width: 576px) {
-    .mt-3 {
-        margin-top: 1rem !important;
-    }
-    
-    .mb-2 {
-        margin-bottom: 0.5rem !important;
-    }
-}
-</style>
